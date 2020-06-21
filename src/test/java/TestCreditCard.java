@@ -19,15 +19,31 @@ public class TestCreditCard {
                 "Наш менеджер свяжется с вами в ближайшее время."));
     }
 
+
+    //todo Дописать селектор
     @Test
     void shouldUncheckedCheckbox() {
         open("http://localhost:9999");
         SelenideElement form = $(".form");
+        form.$("[data-test-id=name] input").setValue("Петров Петр");
+        form.$("[data-test-id=phone] input").setValue("+78005554433");
+        form.$(".button").click();
+        /*$(".input_invalid .checkbox__text").shouldHave(exactText("Я соглашаюсь с условиями " +
+                "обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных" +
+                " историй"));*/
+        $(".input_invalid .checkbox__text").getCssValue("color").equals("#ff5c5c");
+    }
+
+    @Test
+    void shouldInputPatronymic() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
         form.$("[data-test-id=name] input").setValue("Петров Петр Петрович");
         form.$("[data-test-id=phone] input").setValue("+78005554433");
-        //form.$("[data-test-id=agreement]").click();
+        form.$("[data-test-id=agreement]").click();
         form.$(".button").click();
-        $("require(./checkbox.css").getCssValue("background-color").equals("#ff5c5c!important");
+        $(".input_invalid .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. " +
+                "Допустимы только русские буквы, пробелы и дефисы."));
     }
 
     @Test
@@ -44,7 +60,7 @@ public class TestCreditCard {
     void shouldEmptyTelNumber() {
         open("http://localhost:9999");
         SelenideElement form = $(".form");
-        form.$("[data-test-id=name] input").setValue("Петров Петр Петрович");
+        form.$("[data-test-id=name] input").setValue("Петров Петр");
         form.$("[data-test-id=agreement]").click();
         form.$(".button").click();
         $(".input_invalid .input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
@@ -95,10 +111,22 @@ public class TestCreditCard {
     }
 
     @Test
-    void shouldSpacesAroundTheEdgesOfTheName() {
+    void shouldSpacesBeforeText() {
         open("http://localhost:9999");
         SelenideElement form = $(".form");
-        form.$("[data-test-id=name] input").setValue("   Иванов Василий   ");
+        form.$("[data-test-id=name] input").setValue("   Иванов Василий");
+        form.$("[data-test-id=phone] input").setValue("+78005554433");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button").click();
+        $(".input_invalid .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы " +
+                "только русские буквы, пробелы и дефисы."));
+    }
+
+    @Test
+    void shouldSpacesAfterText() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
+        form.$("[data-test-id=name] input").setValue("Иванов Василий   ");
         form.$("[data-test-id=phone] input").setValue("+78005554433");
         form.$("[data-test-id=agreement]").click();
         form.$(".button").click();
@@ -122,7 +150,7 @@ public class TestCreditCard {
     void shouldHyphenInStartName() {
         open("http://localhost:9999");
         SelenideElement form = $(".form");
-        form.$("[data-test-id=name] input").setValue("-Иван");
+        form.$("[data-test-id=name] input").setValue("-Иван Иванов");
         form.$("[data-test-id=phone] input").setValue("+78005554433");
         form.$("[data-test-id=agreement]").click();
         form.$(".button").click();
@@ -134,7 +162,7 @@ public class TestCreditCard {
     void shouldHyphenInFinishName() {
         open("http://localhost:9999");
         SelenideElement form = $(".form");
-        form.$("[data-test-id=name] input").setValue("Иван-");
+        form.$("[data-test-id=name] input").setValue("Иван Иванов-");
         form.$("[data-test-id=phone] input").setValue("+78005554433");
         form.$("[data-test-id=agreement]").click();
         form.$(".button").click();
