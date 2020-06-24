@@ -1,6 +1,7 @@
 import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.Test;
 
+import static com.codeborne.selenide.Condition.cssValue;
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
@@ -19,8 +20,6 @@ public class TestCreditCard {
                 "Наш менеджер свяжется с вами в ближайшее время."));
     }
 
-
-    //todo Дописать селектор
     @Test
     void shouldUncheckedCheckbox() {
         open("http://localhost:9999");
@@ -28,10 +27,19 @@ public class TestCreditCard {
         form.$("[data-test-id=name] input").setValue("Петров Петр");
         form.$("[data-test-id=phone] input").setValue("+78005554433");
         form.$(".button").click();
-        /*$(".input_invalid .checkbox__text").shouldHave(exactText("Я соглашаюсь с условиями " +
+        $("[data-test-id=agreement].input_invalid").shouldHave(exactText("Я соглашаюсь с условиями " +
                 "обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных" +
-                " историй"));*/
-        $(".input_invalid .checkbox__text").getCssValue("color").equals("#ff5c5c");
+                " историй"));
+    }
+
+    @Test
+    void shouldColorUncheckedCheckbox() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
+        form.$("[data-test-id=name] input").setValue("Петров Петр");
+        form.$("[data-test-id=phone] input").setValue("+78005554433");
+        form.$(".button").click();
+        $("[data-test-id=agreement].input_invalid").shouldHave(cssValue("color", "rgba(255, 92, 92, 1)"));
     }
 
     @Test
